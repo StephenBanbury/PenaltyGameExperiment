@@ -3,6 +3,45 @@ $buttonStrengthColor: #af0d0d;
 $textGrey: #4e4e4e;
 $buttonBorder: #acacac;
 
+/* make the canvases, children of the this container */
+#container {
+  position: relative;
+}
+
+#canvas {
+  background: transparent;
+}
+
+.football-area {
+  z-index: 10;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.video-container {
+  z-index: 8;
+  pointer-events: all;
+  margin: auto;
+  position: relative;
+  overflow: hidden;
+  width: 66%;
+  // padding-top: 56.25%; /* 16:9 Aspect Ratio (divide 9 by 16 = 0.5625) */
+  padding-top: 37.5%;
+  /* 16:9 Aspect Ratio (divide 9 by 16 = 0.5625) */
+  // Note: I reduced the width and padding (aspect ratio) by a third
+}
+
+.forward {
+  z-index: 10;
+}
+
+.back {
+  z-index: 8;
+}
+
 h1 {
   font-size: 2rem;
   margin-bottom: 7rem;
@@ -29,7 +68,7 @@ h4 {
 .info {
   position: absolute;
   left: 50%;
-  top: 9rem;
+  top: 5rem;
   -webkit-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
   text-align: center;
@@ -46,18 +85,8 @@ h4 {
   border: none;
 }
 
-.video-container {
-  margin: auto;
-  position: relative;
-  overflow: hidden;
-  width: 66%;
-  // padding-top: 56.25%; /* 16:9 Aspect Ratio (divide 9 by 16 = 0.5625) */
-  padding-top: 37.5%;
-  /* 16:9 Aspect Ratio (divide 9 by 16 = 0.5625) */
-  // Note: I reduced the width and padding (aspect ratio) by a third
-}
-
 .button {
+  z-index: 12;
   background-color: transparent;
   width: 49.5%;
   height: 48.5%;

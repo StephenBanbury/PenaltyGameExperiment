@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-penalty-shoot-out',
@@ -6,6 +7,9 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./penalty-shoot-out.component.scss']
 })
 export class PenaltyShootOutComponent {
+  startAnimation: Subject<boolean> = new Subject();
+  resetAnimation: Subject<boolean> = new Subject();
+
   public buttonId: string = '';
   public strength: number = 0;
   public width: string = '0';
@@ -16,7 +20,8 @@ export class PenaltyShootOutComponent {
   private timerStepSize: number = 0.05;
   private timerspeed: number = 10;
 
-  constructor() {}
+  constructor(
+  ) {}
 
   public onAction($event: any) {
     if (this.isKickCompleted) return;
@@ -65,6 +70,7 @@ export class PenaltyShootOutComponent {
     this.clearAllIntervals();
     this.strengthFinal = this.strength;
     this.isKickCompleted = true;
+    this.startAnimation.next(true);
   }
 
   public reset() {
@@ -74,5 +80,6 @@ export class PenaltyShootOutComponent {
     this.width = '0';
     this.height = '0';
     this.isKickCompleted = false;
+    this.resetAnimation.next(true);
   }
 }

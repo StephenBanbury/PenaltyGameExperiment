@@ -32,7 +32,7 @@ export class YoutubeLiveStreamComponent implements OnInit {
 
     this.setPlayerUrl(
       MediaType.YouTubeLive,
-      'https://www.youtube.com/embed/CXnTlmZIwrA'
+      'https://www.youtube.com/embed/CXnTlmZIwrA?autoplay=1'
     );
   }
 
