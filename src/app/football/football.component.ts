@@ -101,7 +101,6 @@ export class FootballComponent implements OnInit {
         // while(this.scene.children.length > 0){
         //   this.scene.remove(this.scene.children[0]);
         // }
-        //this.isRendering = false;
       }
     });
   }
