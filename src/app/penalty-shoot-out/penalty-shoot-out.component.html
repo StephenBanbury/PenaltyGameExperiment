@@ -1,0 +1,35 @@
+<div class="page">
+  <div class="center title">
+    <h1>Penalty Game</h1>
+  </div>
+  <div class="video-container">
+
+    <app-youtube-live-stream></app-youtube-live-stream>
+
+    <button id="top-left" class="button button-one" (mousedown)="onAction($event)" (mouseup)="onAction($event)">
+      <div *ngIf="buttonId=='top-left' && !isKickCompleted" class="strength-indicator" [ngStyle]="{'width': width, 'height': height }"></div>
+    </button>
+
+    <button id="top-right" class="button button-two" (mousedown)="onAction($event)" (mouseup)="onAction($event)">
+      <div *ngIf="buttonId=='top-right' && !isKickCompleted" class="strength-indicator" [ngStyle]="{'width': width, 'height': height }"></div>
+    </button>
+
+    <button id="bottom-left" class="button button-three" (mousedown)="onAction($event)" (mouseup)="onAction($event)">
+      <div *ngIf="buttonId=='bottom-left' && !isKickCompleted" class="strength-indicator" [ngStyle]="{'width': width, 'height': height }"></div>
+    </button>
+
+    <button id="bottom-right" class="button button-four" (mousedown)="onAction($event)" (mouseup)="onAction($event)">
+      <div *ngIf="buttonId=='bottom-right' && !isKickCompleted" class="strength-indicator" [ngStyle]="{'width': width, 'height': height }"></div>
+    </button>
+
+  </div>
+  <div class="info">
+    <div style="float: left;">
+      <h3 *ngIf="isKickCompleted">Kick!</h3>
+      <h4 *ngIf="isKickCompleted">{{buttonId}} : {{strengthFinal}}</h4>
+    </div>
+    <div class="reset-button-container">
+      <button class="reset-button" *ngIf="strengthFinal>0" (click)="reset()">Reset</button>
+    </div>
+  </div>
+</div>
