@@ -20,10 +20,9 @@ export class FootballComponent implements OnInit {
   @Input() public rotationSpeedX: number = 0.001;
   @Input() public rotationSpeedY: number = 0.001;
   @Input() public size: number = 1;
-  @Input() public accellerationRate: number = 0.001;
 
   // Stage properties
-  @Input() public cameraZ: number = 400;
+  @Input() public cameraZ: number = 100;
   @Input() public fieldOfView: number = 1;
   @Input('nearClipping') public nearClippingPlane: number = 1;
   @Input('farClipping') public farclippingPlane: number = 10000;
@@ -31,6 +30,8 @@ export class FootballComponent implements OnInit {
   @ViewChild('canvas') private canvasRef!: ElementRef;
 
   public speed: number = 1;
+  public accellerationRate: number = 0.00005;
+
   public texture: string = '/assets/football.jpg';
 
   // Helper Properties (Private Properties);
@@ -50,13 +51,9 @@ export class FootballComponent implements OnInit {
   });
 
   private sphere: Mesh = new Mesh(this.geometry, this.material);
-  private sphere2: Mesh = new Mesh(this.geometry, this.material);
 
   private renderer!: WebGLRenderer;
   private scene!: Scene;
-
-  //private cornerPoints: ICornerPoints;
-
 
 
   constructor() {}
@@ -124,53 +121,20 @@ export class FootballComponent implements OnInit {
     return this.canvas.clientWidth / this.canvas.clientHeight;
   }
 
-  private animate() {
-    this.sphere.rotation.x += this.rotationSpeedX;
-    this.sphere.rotation.y += this.rotationSpeedY;
-
-    this.speed += this.accellerationRate;
-    this.animateObject(this.speed);
-  }
-
   private cornerPoints(): ICornerPoints {
     const width = 100;
     const height = 60;
     const distance = -3000;
 
     const cornerPoints: ICornerPoints = {
-      topLeft: new Vector3( 0 - (width / 4), 0 + (height / 4), distance),
-      topRight: new Vector3( 0 + (width / 4), 0 + (height / 4), distance),
-      bottomLeft: new Vector3( 0 - (width / 4), 0 - (height / 4), distance),
-      bottomRight: new Vector3( 0 + (width / 4), 0 - (height / 4), distance)
+      topLeft: new Vector3( 0 - (width / 2.5), 0 + (height / 2.5), distance),
+      topRight: new Vector3( 0 + (width / 2.5), 0 + (height / 2.5), distance),
+      bottomLeft: new Vector3( 0 - (width / 2.5), 0 - (height / 2.5), distance),
+      bottomRight: new Vector3( 0 + (width / 2.5), 0 - (height / 2.5), distance)
     };
 
     return cornerPoints;
   }
-
-  private animateObject(speed: number) {
-    var d = this.oldPos.z - this.newPos.z;
-    if (this.sphere.position.z > this.newPos.z) {
-      //console.log('move', this.sphere.position.z, this.newPos.z);
-      this.sphere.position.z -= Math.min(speed, d);
-    }
-  }
-
-  /*
-  private animateObject(speed: number) {
-    var dX = this.oldPos.x + this.newPos.x;
-    var dY = this.oldPos.y + this.newPos.y;
-    var dZ = this.oldPos.z - this.newPos.z;
-    //if (this.sphere.position.x > this.newPos.x) {
-      this.sphere.position.x -= Math.min(speed, dX);
-    //}
-    //if (this.sphere.position.y > this.newPos.y) {
-      this.sphere.position.y -= Math.min(speed, dY);
-    //}
-    //if (this.sphere.position.z > this.newPos.z) {
-      this.sphere.position.z -= Math.min(speed, dZ);
-    //}
-  }
-  */
 
   private getShootPosition(): Vector3 {
     let position = new Vector3;
@@ -191,6 +155,14 @@ export class FootballComponent implements OnInit {
     return position;
   }
 
+  private animate() {
+    this.sphere.rotation.x += this.rotationSpeedX;
+    this.sphere.rotation.y += this.rotationSpeedY;
+    this.sphere.position.lerp(this.newPos, this.speed);
+
+    this.speed += this.accellerationRate;
+  }
+
   private startRenderingLoop() {
     //* Renderer
     // Use canvas element in template
@@ -203,11 +175,7 @@ export class FootballComponent implements OnInit {
     this.oldPos = this.sphere.position;
     this.newPos = this.getShootPosition();
 
-    this.sphere2.position.set(this.newPos.x, this.newPos.y, this.newPos.z);
-    this.scene.add(this.sphere2);
-
-    this.speed = this.strength/100;
-    this.accellerationRate = this.strength * 0.004;
+    this.speed = this.strength / 100000;
 
     console.log(
       'Move params',
