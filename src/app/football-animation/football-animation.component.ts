@@ -4,11 +4,11 @@ import { SphereGeometry, Mesh, MeshBasicMaterial, PerspectiveCamera, Scene, Text
 import { ICornerPoints } from '../../shared/interfaces/corner-points';
 
 @Component({
-  selector: 'app-football',
-  templateUrl: './football.component.html',
-  styleUrls: ['./football.component.css'],
+  selector: 'app-football-animation',
+  templateUrl: './football-animation.component.html',
+  styleUrls: ['./football-animation.component.css'],
 })
-export class FootballComponent implements OnInit {
+export class FootballAnimationComponent implements OnInit {
 
   @Input() startAnimation!: Subject<boolean>;
   @Input() resetAnimation!: Subject<boolean>;
@@ -170,7 +170,7 @@ export class FootballComponent implements OnInit {
     this.renderer.setPixelRatio(devicePixelRatio);
     this.renderer.setSize(this.canvas.clientWidth, this.canvas.clientHeight);
 
-    let component: FootballComponent = this;
+    let component: FootballAnimationComponent = this;
 
     this.oldPos = this.sphere.position;
     this.newPos = this.getShootPosition();
