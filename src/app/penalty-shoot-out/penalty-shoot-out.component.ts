@@ -70,7 +70,7 @@ export class PenaltyShootOutComponent {
     this.clearAllIntervals();
     this.strengthFinal = this.strength;
     this.isKickCompleted = true;
-    this.startAnimation.next(true);
+    //this.startAnimation.next(true);
   }
 
   public reset() {
@@ -80,6 +80,6 @@ export class PenaltyShootOutComponent {
     this.width = '0';
     this.height = '0';
     this.isKickCompleted = false;
-    this.resetAnimation.next(true);
+    //this.resetAnimation.next(true);
   }
 }

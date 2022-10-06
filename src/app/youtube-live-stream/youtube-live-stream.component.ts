@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { MediaType } from '../../shared/enums/media-type';
 
 @Component({
@@ -7,8 +7,11 @@ import { MediaType } from '../../shared/enums/media-type';
   styleUrls: ['./youtube-live-stream.component.scss'],
 })
 export class YoutubeLiveStreamComponent implements OnInit {
-  public youTubeVideoUrl: string = '';
-  public youTubeLiveUrl: string = '';
+  @Input() public url: string = '';
+  @Input() public isLiveStream: boolean = false;
+
+  //public youTubeUrl: string = '';
+  private mediaType: MediaType = MediaType.NotSet;
 
   constructor() {}
 
@@ -25,25 +28,10 @@ export class YoutubeLiveStreamComponent implements OnInit {
     // Shareable link:
     // 'https://youtu.be/5VNuB7Y6SvQ'
 
-    this.setPlayerUrl(
-      MediaType.YouTubeVideo,
-      'https://www.youtube.com/embed/_o-rHZSr1i0'
-    );
+    this.mediaType = this.isLiveStream ? MediaType.YouTubeLive : MediaType.YouTubeVideo;
 
-    this.setPlayerUrl(
-      MediaType.YouTubeLive,
-      'https://www.youtube.com/embed/CXnTlmZIwrA?autoplay=1'
-    );
-  }
+    console.log('Is live stream', this.isLiveStream);
+    console.log('URL', this.url);
 
-  private setPlayerUrl(type: MediaType, url: string) {
-    switch (type) {
-      case 1:
-        this.youTubeVideoUrl = url;
-        break;
-      case 2:
-        this.youTubeLiveUrl = url;
-        break;
-    }
   }
 }
