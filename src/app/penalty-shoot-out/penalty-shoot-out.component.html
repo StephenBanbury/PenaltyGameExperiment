@@ -6,7 +6,9 @@
 
   <div class="video-container">
 
-    <app-football class="football-area" [startAnimation]="startAnimation" [resetAnimation]="resetAnimation" [rotationSpeedX]="0.01" [rotationSpeedY]="0.01" [velocity]="0" [size]="2" [sizeChangeRate]="0.005"></app-football>
+    <app-football class="football-area" [startAnimation]="startAnimation" [resetAnimation]="resetAnimation"
+      [rotationSpeedX]="0.01" [rotationSpeedY]="0.01" [shootPosition]="buttonId" [strength]="strength" [size]="2" [accellerationRate]="0.005">
+    </app-football>
 
     <app-youtube-live-stream></app-youtube-live-stream>
 

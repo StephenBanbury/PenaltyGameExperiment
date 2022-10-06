@@ -1,21 +1,7 @@
-import {
-  Component,
-  ElementRef,
-  HostListener,
-  Input,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { Subject } from 'rxjs';
-import {
-  SphereGeometry,
-  Mesh,
-  MeshBasicMaterial,
-  PerspectiveCamera,
-  Scene,
-  TextureLoader,
-  WebGLRenderer,
-} from 'three';
+import { SphereGeometry, Mesh, MeshBasicMaterial, PerspectiveCamera, Scene, TextureLoader, WebGLRenderer, Vector3 } from 'three';
+import { ICornerPoints } from '../../shared/interfaces/corner-points';
 
 @Component({
   selector: 'app-football',
@@ -23,35 +9,34 @@ import {
   styleUrls: ['./football.component.css'],
 })
 export class FootballComponent implements OnInit {
-  // @HostListener('window:keydown', ['$event']) keyPress(event: any) {
-  //   this.keyEvent(event.keyCode);
-  // }
 
-  @Input()
-  startAnimation!: Subject<boolean>;
+  @Input() startAnimation!: Subject<boolean>;
+  @Input() resetAnimation!: Subject<boolean>;
 
-  @Input()
-  resetAnimation!: Subject<boolean>;
-
-  @ViewChild('canvas')
-  private canvasRef!: ElementRef;
+  @Input() strength: number = 1;
+  @Input() shootPosition!: string;
 
   // Sphere properties
   @Input() public rotationSpeedX: number = 0.001;
   @Input() public rotationSpeedY: number = 0.001;
-  @Input() public velocity: number = 0;
   @Input() public size: number = 1;
-  @Input() public sizeChangeRate: number = 0.001;
-  @Input() public texture: string = '/assets/football.jpg';
+  @Input() public accellerationRate: number = 0.001;
 
   // Stage properties
   @Input() public cameraZ: number = 400;
   @Input() public fieldOfView: number = 1;
   @Input('nearClipping') public nearClippingPlane: number = 1;
-  @Input('farClipping') public farclippingPlane: number = 1000;
+  @Input('farClipping') public farclippingPlane: number = 10000;
+
+  @ViewChild('canvas') private canvasRef!: ElementRef;
+
+  public speed: number = 1;
+  public texture: string = '/assets/football.jpg';
 
   // Helper Properties (Private Properties);
   private camera!: PerspectiveCamera;
+  private oldPos: Vector3 = new Vector3();
+  private newPos: Vector3 = new Vector3();
 
   private get canvas(): HTMLCanvasElement {
     return this.canvasRef.nativeElement;
@@ -65,13 +50,14 @@ export class FootballComponent implements OnInit {
   });
 
   private sphere: Mesh = new Mesh(this.geometry, this.material);
+  private sphere2: Mesh = new Mesh(this.geometry, this.material);
+
   private renderer!: WebGLRenderer;
   private scene!: Scene;
-  private footballSize: number = 1;
 
-  //private isRendering: boolean = false;
+  //private cornerPoints: ICornerPoints;
 
-  private tick: number = 0;
+
 
   constructor() {}
 
@@ -80,37 +66,37 @@ export class FootballComponent implements OnInit {
     this.setListeners();
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   private setListeners() {
     this.startAnimation.subscribe((start) => {
       console.log('start animation', start);
       if (start) {
-        this.footballSize = this.size;
+        this.sphere.position.set(0, 0, 0);
         this.showFootball(true);
-        //this.isRendering = true;
         this.startRenderingLoop();
       }
     });
     this.resetAnimation.subscribe((reset) => {
       console.log('reset animation', reset);
       if (reset) {
+        //this.removeScene();
         this.showFootball(false);
-        //this.isRendering = false;
-        // while(this.scene.children.length > 0){
-        //   this.scene.remove(this.scene.children[0]);
-        // }
       }
     });
+  }
+
+  private removeScene() {
+    while(this.scene.children.length > 0){
+      this.scene.remove(this.scene.children[0]);
+    }
   }
 
   private showFootball(isVisible: boolean) {
     this.sphere.traverse(function (child) {
       if (child instanceof Mesh) {
-        child.children.forEach(child => child.visible = isVisible);
+        child.children.forEach((child) => (child.visible = isVisible));
         child.visible = isVisible;
-        console.log('visible', child.visible);
       }
     });
   }
@@ -118,9 +104,9 @@ export class FootballComponent implements OnInit {
   private createScene() {
     //* Scene
     this.scene = new Scene();
-    //this.scene.background = new Color(0x000000);
     this.sphere.rotation.x = 0.3;
     this.sphere.rotation.y = 0.3;
+    this.sphere.position.set(0, 0, 0);
     this.scene.add(this.sphere);
 
     //* Camera
@@ -138,18 +124,71 @@ export class FootballComponent implements OnInit {
     return this.canvas.clientWidth / this.canvas.clientHeight;
   }
 
-
   private animate() {
     this.sphere.rotation.x += this.rotationSpeedX;
     this.sphere.rotation.y += this.rotationSpeedY;
-    if (this.footballSize >= 0.2) {
 
-      this.tick++;
-      console.log(this.tick, 'footballSize', this.footballSize, ', sizeChangeRate', this.sizeChangeRate);
+    this.speed += this.accellerationRate;
+    this.animateObject(this.speed);
+  }
 
-      this.footballSize -= this.sizeChangeRate;
-      this.sphere.scale.set(this.footballSize, this.footballSize, this.footballSize);
+  private cornerPoints(): ICornerPoints {
+    const width = 100;
+    const height = 60;
+    const distance = -3000;
+
+    const cornerPoints: ICornerPoints = {
+      topLeft: new Vector3( 0 - (width / 4), 0 + (height / 4), distance),
+      topRight: new Vector3( 0 + (width / 4), 0 + (height / 4), distance),
+      bottomLeft: new Vector3( 0 - (width / 4), 0 - (height / 4), distance),
+      bottomRight: new Vector3( 0 + (width / 4), 0 - (height / 4), distance)
+    };
+
+    return cornerPoints;
+  }
+
+  private animateObject(speed: number) {
+    var d = this.oldPos.z - this.newPos.z;
+    if (this.sphere.position.z > this.newPos.z) {
+      //console.log('move', this.sphere.position.z, this.newPos.z);
+      this.sphere.position.z -= Math.min(speed, d);
     }
+  }
+
+  /*
+  private animateObject(speed: number) {
+    var dX = this.oldPos.x + this.newPos.x;
+    var dY = this.oldPos.y + this.newPos.y;
+    var dZ = this.oldPos.z - this.newPos.z;
+    //if (this.sphere.position.x > this.newPos.x) {
+      this.sphere.position.x -= Math.min(speed, dX);
+    //}
+    //if (this.sphere.position.y > this.newPos.y) {
+      this.sphere.position.y -= Math.min(speed, dY);
+    //}
+    //if (this.sphere.position.z > this.newPos.z) {
+      this.sphere.position.z -= Math.min(speed, dZ);
+    //}
+  }
+  */
+
+  private getShootPosition(): Vector3 {
+    let position = new Vector3;
+    switch (this.shootPosition){
+      case 'top-left':
+        position = this.cornerPoints().topLeft;
+      break;
+      case 'top-right':
+        position = this.cornerPoints().topRight;
+        break;
+      case 'bottom-left':
+        position = this.cornerPoints().bottomLeft;
+        break;
+      case 'bottom-right':
+        position = this.cornerPoints().bottomRight;
+        break;
+    }
+    return position;
   }
 
   private startRenderingLoop() {
@@ -161,36 +200,27 @@ export class FootballComponent implements OnInit {
 
     let component: FootballComponent = this;
 
-    this.tick = 0;
+    this.oldPos = this.sphere.position;
+    this.newPos = this.getShootPosition();
+
+    this.sphere2.position.set(this.newPos.x, this.newPos.y, this.newPos.z);
+    this.scene.add(this.sphere2);
+
+    this.speed = this.strength/100;
+    this.accellerationRate = this.strength * 0.004;
+
+    console.log(
+      'Move params',
+      'From:', this.oldPos,
+      'To:', this.newPos,
+      'Speed:', this.speed,
+      'Accelleration:', this.accellerationRate
+    );
 
     (function render() {
-        requestAnimationFrame(render);
-        component.animate();
-        component.renderer.render(component.scene, component.camera);
+      requestAnimationFrame(render);
+      component.animate();
+      component.renderer.render(component.scene, component.camera);
     })();
   }
-
-  // keyEvent(keyCode: number) {
-  //   console.log(keyCode);
-  //   switch (keyCode) {
-  //     case 37: // Left
-  //       this.rotationSpeedY -= 0.001;
-  //       break;
-  //     case 38: // Up
-  //       this.rotationSpeedX -= 0.001;
-  //       break;
-  //     case 39: // Right
-  //       this.rotationSpeedY += 0.001;
-  //       break;
-  //     case 40: // Down
-  //       this.rotationSpeedX += 0.001;
-  //       break;
-  //     case 187: // Plus
-  //       this.size += 0.01;
-  //       break;
-  //     case 189: // Minus
-  //       this.size -= 0.01;
-  //       break;
-  //   }
-  //}
 }
