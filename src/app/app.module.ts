@@ -3,17 +3,17 @@ import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { YoutubeLiveStreamComponent } from './youtube-live-stream/youtube-live-stream.component';
+import { VideoStreamComponent } from './video-stream/video-stream.component';
 import { SafePipe } from '../shared/pipes/safe-pipe';
 import { PenaltyShootOutComponent } from './penalty-shoot-out/penalty-shoot-out.component';
-import { FootballComponent } from './football/football.component';
+import { FootballAnimationComponent } from './football-animation/football-animation.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    YoutubeLiveStreamComponent,
+    VideoStreamComponent,
     PenaltyShootOutComponent,
-    FootballComponent,
+    FootballAnimationComponent,
     SafePipe,
   ],
   imports: [

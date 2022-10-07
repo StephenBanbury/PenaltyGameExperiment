@@ -20,8 +20,10 @@ export class PenaltyShootOutComponent {
   private timerStepSize: number = 0.05;
   private timerspeed: number = 10;
 
+  public penaltyVideoLocation: string = '';
+
   constructor(
-  ) {}
+  ) { }
 
   public onAction($event: any) {
     if (this.isKickCompleted) return;
@@ -53,11 +55,11 @@ export class PenaltyShootOutComponent {
       } else {
         this.kick();
       }
-    }, this.timerStepSize * this.timerspeed );
+    }, this.timerStepSize * this.timerspeed);
   }
 
   private clearAllIntervals() {
-    const intervalId = window.setInterval(() => {}, Number.MAX_SAFE_INTEGER);
+    const intervalId = window.setInterval(() => { }, Number.MAX_SAFE_INTEGER);
     for (let i = 1; i < intervalId; i++) {
       window.clearInterval(i);
     }
@@ -70,7 +72,8 @@ export class PenaltyShootOutComponent {
     this.clearAllIntervals();
     this.strengthFinal = this.strength;
     this.isKickCompleted = true;
-    this.startAnimation.next(true);
+    this.playPenaltyVideo(this.buttonId);
+    //this.startAnimation.next(true);
   }
 
   public reset() {
@@ -80,6 +83,11 @@ export class PenaltyShootOutComponent {
     this.width = '0';
     this.height = '0';
     this.isKickCompleted = false;
-    this.resetAnimation.next(true);
+    //this.resetAnimation.next(true);
+  }
+
+  playPenaltyVideo(placement: string) {
+    const fileName = `penalty_${placement.replace('-', '_')}`;
+    this.penaltyVideoLocation = `../../assets/${fileName}.mp4?autoplay=1`;
   }
 }
