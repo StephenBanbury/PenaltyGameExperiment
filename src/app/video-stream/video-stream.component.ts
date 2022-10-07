@@ -2,11 +2,11 @@ import { Component, Input, OnInit } from '@angular/core';
 import { MediaType } from '../../shared/enums/media-type';
 
 @Component({
-  selector: 'app-youtube-live-stream',
-  templateUrl: './youtube-live-stream.component.html',
-  styleUrls: ['./youtube-live-stream.component.scss'],
+  selector: 'app-video-stream',
+  templateUrl: './video-stream.component.html',
+  styleUrls: ['./video-stream.component.scss'],
 })
-export class YoutubeLiveStreamComponent implements OnInit {
+export class VideoStreamComponent implements OnInit {
   @Input() public url: string = '';
   @Input() public isLiveStream: boolean = false;
 

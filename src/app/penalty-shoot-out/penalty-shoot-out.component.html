@@ -10,8 +10,11 @@
       [rotationSpeedX]="0.01" [rotationSpeedY]="0.01" [shootPosition]="buttonId" [strength]="strength" [size]="2">
     </app-football-animation> -->
 
-    <app-youtube-live-stream [isLiveStream]="true" [url]="'https://www.youtube.com/embed/CXnTlmZIwrA?autoplay=1'"></app-youtube-live-stream>
-    <app-youtube-live-stream [isLiveStream]="false" [url]="'https://www.youtube.com/embed/_o-rHZSr1i0?autoplay=1'" [ngStyle]="{ 'opacity': isKickCompleted ? '0.3' : '0' }"></app-youtube-live-stream>
+    <app-video-stream [isLiveStream]="true" [url]="'https://www.youtube.com/embed/b6YysrDIaZI?autoplay=1'"></app-video-stream>
+    <app-video-stream [isLiveStream]="false" [url]="penaltyVideoLocation" [ngStyle]="{ 'opacity': isKickCompleted ? '0.3' : '0' }"></app-video-stream>
+    <!-- <app-youtube-live-stream [isLiveStream]="false" [url]="'src/assets/goal_top_left.mp4'" [ngStyle]="{ 'opacity': isKickCompleted ? '0.3' : '0' }"></app-youtube-live-stream> -->
+
+
 
     <button id="top-left" class="button button-one" (mousedown)="onAction($event)" (mouseup)="onAction($event)">
       <div *ngIf="buttonId=='top-left' && !isKickCompleted" class="strength-indicator"

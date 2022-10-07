@@ -20,6 +20,8 @@ export class PenaltyShootOutComponent {
   private timerStepSize: number = 0.05;
   private timerspeed: number = 10;
 
+  public penaltyVideoLocation: string = '';
+
   constructor(
   ) {}
 
@@ -70,6 +72,7 @@ export class PenaltyShootOutComponent {
     this.clearAllIntervals();
     this.strengthFinal = this.strength;
     this.isKickCompleted = true;
+    this.playPenaltyVideo();
     //this.startAnimation.next(true);
   }
 
@@ -81,5 +84,9 @@ export class PenaltyShootOutComponent {
     this.height = '0';
     this.isKickCompleted = false;
     //this.resetAnimation.next(true);
+  }
+
+  playPenaltyVideo() {
+    this.penaltyVideoLocation = '../../assets/goal_top_left.mp4?autoplay=1';
   }
 }

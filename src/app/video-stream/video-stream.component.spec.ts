@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { YoutubeLiveStreamComponent } from './youtube-live-stream.component';
+import { VideoStreamComponent } from './video-stream.component';
 
-describe('YoutubeLiveStreamComponent', () => {
-  let component: YoutubeLiveStreamComponent;
-  let fixture: ComponentFixture<YoutubeLiveStreamComponent>;
+describe('VideoStreamComponent', () => {
+  let component: VideoStreamComponent;
+  let fixture: ComponentFixture<VideoStreamComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ YoutubeLiveStreamComponent ]
+      declarations: [ VideoStreamComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(YoutubeLiveStreamComponent);
+    fixture = TestBed.createComponent(VideoStreamComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
