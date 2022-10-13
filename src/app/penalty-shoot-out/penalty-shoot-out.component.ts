@@ -1,36 +1,44 @@
-import { Component, ViewChild } from '@angular/core';
-import { Subject } from 'rxjs';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Subject} from 'rxjs';
+import {WebSocketService} from 'src/app/services/websocket.service';
 
 @Component({
   selector: 'app-penalty-shoot-out',
   templateUrl: './penalty-shoot-out.component.html',
   styleUrls: ['./penalty-shoot-out.component.scss']
 })
-export class PenaltyShootOutComponent {
+export class PenaltyShootOutComponent implements OnInit {
   startAnimation: Subject<boolean> = new Subject();
   resetAnimation: Subject<boolean> = new Subject();
 
   public buttonId: string = '';
   public strength: number = 0;
-  public width: string = '0';
-  public height: string = '0';
+  public indicatorWidth: string = '0';
+  public indicatorHeight: string = '0';
   public isKickCompleted: boolean = false;
   public strengthFinal: number = 0;
 
   private timerStepSize: number = 0.05;
-  private timerspeed: number = 10;
+  private timerSpeed: number = 10;
 
   public penaltyVideoLocation: string = '';
 
-  constructor(
-  ) { }
+  constructor(private webSocket: WebSocketService) {}
+
+  ngOnInit() {
+    this.webSocket.connect();
+  }
+
+  sendMessage(msg: any) {
+    this.webSocket.send(msg);
+  }
 
   public onAction($event: any) {
     if (this.isKickCompleted) return;
 
     this.buttonId = $event.currentTarget.id;
     const eventType = $event.type;
-    console.log(this.buttonId, eventType);
+    //console.log(this.buttonId, eventType);
     switch (eventType) {
       case 'mousedown':
         this.strength = 0;
@@ -49,17 +57,18 @@ export class PenaltyShootOutComponent {
     setInterval(() => {
       if (this.strength < 100) {
         timer += this.timerStepSize;
-        this.strength = Math.floor(timer * this.timerspeed);
-        this.width = this.strength.toString() + '%';
-        this.height = this.strength.toString() + '%';
+        this.strength = Math.floor(timer * this.timerSpeed);
+        this.indicatorWidth = this.strength.toString() + '%';
+        this.indicatorHeight = this.strength.toString() + '%';
       } else {
         this.kick();
       }
-    }, this.timerStepSize * this.timerspeed);
+    }, this.timerStepSize * this.timerSpeed);
   }
 
   private clearAllIntervals() {
-    const intervalId = window.setInterval(() => { }, Number.MAX_SAFE_INTEGER);
+    const intervalId = window.setInterval(() => {
+    }, Number.MAX_SAFE_INTEGER);
     for (let i = 1; i < intervalId; i++) {
       window.clearInterval(i);
     }
@@ -68,11 +77,11 @@ export class PenaltyShootOutComponent {
   private kick() {
     if (this.isKickCompleted) return;
 
-    console.log('Kick!');
     this.clearAllIntervals();
     this.strengthFinal = this.strength;
     this.isKickCompleted = true;
     this.playPenaltyVideo(this.buttonId);
+    this.sendMessage({Position: this.buttonId, Strength: this.strengthFinal });
     //this.startAnimation.next(true);
   }
 
@@ -80,8 +89,8 @@ export class PenaltyShootOutComponent {
     this.strengthFinal = 0;
     this.strength = 0;
     this.buttonId = '';
-    this.width = '0';
-    this.height = '0';
+    this.indicatorWidth = '0';
+    this.indicatorHeight = '0';
     this.isKickCompleted = false;
     //this.resetAnimation.next(true);
   }
